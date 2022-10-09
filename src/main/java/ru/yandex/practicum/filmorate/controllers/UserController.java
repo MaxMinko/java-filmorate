@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +16,9 @@ public class UserController {
     private Map<Integer, User> users = new HashMap();
 
     @GetMapping("/users")
-    public Map<Integer, User> getAllUsers() {
+    public Collection<User> getAllUsers() {
         log.info("Текущее количество пользователей: "+users.size());
-        return users;
+        return users.values();
     }
 
     @PostMapping("/user")

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +16,9 @@ public class FilmController {
     private Map<Integer, Film> films = new HashMap();
 
     @GetMapping("/films")
-    public Map<Integer, Film> getAllFilms() {
+    public Collection<Film> getAllFilms() {
         log.info("Текущее количество фильмов: "+films.size());
-        return films;
+        return films.values();
     }
 
     @PostMapping("/film")

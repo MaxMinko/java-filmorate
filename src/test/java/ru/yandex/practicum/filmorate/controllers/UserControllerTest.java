@@ -32,7 +32,7 @@ public class UserControllerTest {
     @Test
     public void createUser() {
         userController.createUser(user);
-        assertEquals(user, userController.getAllUsers().get(1), "Пользователи не совпадают.");
+        assertEquals(true, userController.getAllUsers().contains(user), "Пользователи не совпадают.");
     }
 
     @Test
@@ -41,7 +41,7 @@ public class UserControllerTest {
                 LocalDate.of(2001, 1, 1));
         userController.createUser(user);
         userController.updateUser(updatedUser);
-        assertEquals(updatedUser, userController.getAllUsers().get(1), "Пользователь не обновился.");
+        assertEquals(true, userController.getAllUsers().contains(updatedUser), "Пользователь не обновился.");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class UserControllerTest {
     public void createUserWithEmptyName(){
         user.setName("");
         userController.createUser(user);
-        assertEquals(user.getLogin(),userController.getAllUsers().get(1).getName(),"Имя и логин не совпадают.");
+        assertEquals(user.getLogin(),user.getName(),"Имя и логин не совпадают.");
     }
     @Test
     public void createUserWithIncorrectBirthday(){

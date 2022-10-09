@@ -33,7 +33,7 @@ public class FilmControllerTest {
     @Test
     public void createFilm() {
         filmController.createFilm(film);
-        assertEquals(film, filmController.getAllFilms().get(1), "Задачи не совпадают.");
+        assertEquals(true, filmController.getAllFilms().contains(film), "Задачи не совпадают.");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class FilmControllerTest {
                 2000, 12, 12), Duration.ofSeconds(100));
         filmController.createFilm(film);
         filmController.updateFilm(updatedFilm);
-        assertEquals(updatedFilm, filmController.getAllFilms().get(1), "Задачи не совпадают.");
+        assertEquals(true, filmController.getAllFilms().contains(updatedFilm), "Задачи не совпадают.");
     }
 
     @Test
