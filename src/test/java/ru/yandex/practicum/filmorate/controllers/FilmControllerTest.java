@@ -1,15 +1,14 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
     private Map<Integer, Film> films;
@@ -21,7 +20,7 @@ public class FilmControllerTest {
         filmController = new FilmController();
         films = new HashMap<>();
         film = new Film(1, "TestFilm", "TestFilmDescription", LocalDate.of(2000, 12,
-                12), Duration.ofSeconds(100));
+                12),100);
     }
 
     @Test
@@ -39,7 +38,7 @@ public class FilmControllerTest {
     @Test
     public void updateFilm() {
         Film updatedFilm = new Film(1, "UpdatedTestFilm", "UpdatedTestFilmDescription", LocalDate.of(
-                2000, 12, 12), Duration.ofSeconds(100));
+                2000, 12, 12), 100);
         filmController.createFilm(film);
         filmController.updateFilm(updatedFilm);
         assertEquals(true, filmController.getAllFilms().contains(updatedFilm), "Задачи не совпадают.");
@@ -67,7 +66,7 @@ public class FilmControllerTest {
 
     @Test
     public void createFilmWithNegativeDuration() {
-        film.setDuration(Duration.ofSeconds(-100));
+        film.setDuration(-100);
 
         filmController.createFilm(film);
 
