@@ -6,13 +6,16 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
     private Map<Integer, User> users = new HashMap<>();
+    private int userId=1;
 
     @GetMapping()
     public Collection<User> getAllUsers() {
@@ -37,10 +40,12 @@ public class UserController {
                 throw new ValidationException("Дата рождения не может быть в будущем!");
             } else if (user.getName().isBlank() || user.getName() == null) {
                 user.setName(user.getLogin());
+                user.setId(userId++);
                 users.put(user.getId(), user);
                 log.info("Добавлен новый пользователь, {}", user);
                 return user;
             } else {
+                user.setId(userId++);
                 users.put(user.getId(), user);
                 log.info("Добавлен новый пользователь, {}", user);
                 return user;
@@ -62,6 +67,7 @@ public class UserController {
                 if (user.getName().isBlank() || user.getName() == null) {
                     user.setName(user.getLogin());
                 }
+                user.setId(userId++);
                 users.put(user.getId(), user);
                 log.info("Пользователь обновлен - , {}", user);
                 return user;
@@ -71,4 +77,5 @@ public class UserController {
             return user;
         }
     }
+
 }
