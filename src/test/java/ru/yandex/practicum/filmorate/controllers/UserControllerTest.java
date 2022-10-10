@@ -55,7 +55,7 @@ public class UserControllerTest {
         } catch (ValidationException e) {
             System.out.println(e.getMessage());
         }
-        assertEquals(true, userController.getAllUsers().contains(updatedUser), "Пользователь не обновился.");
+        assertEquals(false, userController.getAllUsers().contains(updatedUser), "Пользователь не обновился.");
     }
 
     @Test
