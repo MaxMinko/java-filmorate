@@ -15,7 +15,6 @@ import java.util.Map;
 public class FilmController {
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
     private Map<Integer, Film> films = new HashMap<>();
-    private int filmId=1;
 
     @GetMapping()
     public Collection<Film> getAllFilms() {
@@ -42,7 +41,6 @@ public class FilmController {
                 log.error("Продолжительность фильма должна быть положительна!, {}", film);
                 throw new ValidationException("Продолжительность фильма должна быть положительна!");
             } else {
-                film.setId(filmId++);
                 films.put(film.getId(), film);
                 log.info("Добавлен новый фильм, {}", film);
                 return film;
@@ -60,7 +58,6 @@ public class FilmController {
                 log.error("Такого фильма не существует!, {}", film);
                 throw new ValidationException("Такого фильма не существует!");
             } else {
-                film.setId(filmId++);
                 films.put(film.getId(), film);
                 log.info("Фильм обновлен - , {}", film);
                 return film;
