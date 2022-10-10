@@ -25,19 +25,19 @@ public class FilmControllerTest {
     }
 
     @Test
-    public void getAllFilms() {
+    public void getAllFilms() throws ValidationException {
         filmController.createFilm(film);
         assertEquals(1, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
     @Test
-    public void createFilm() {
+    public void createFilm() throws ValidationException {
         filmController.createFilm(film);
         assertEquals(true, filmController.getAllFilms().contains(film), "Задачи не совпадают.");
     }
 
     @Test
-    public void updateFilm() {
+    public void updateFilm() throws ValidationException {
         Film updatedFilm = new Film(1, "UpdatedTestFilm", "UpdatedTestFilmDescription", LocalDate.of(
                 2000, 12, 12), Duration.ofSeconds(100));
         filmController.createFilm(film);
@@ -46,25 +46,37 @@ public class FilmControllerTest {
     }
 
     @Test
-    public void createFilmWithLargeDescription() {
+    public void createFilmWithLargeDescription() throws ValidationException {
         film.setDescription("TestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFil" +
                 "mWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescripti" +
                 "onTestFilmWithLargeDescription");
-        filmController.createFilm(film);
+        try {
+            filmController.createFilm(film);
+        }catch (ValidationException e){
+            System.out.println(e.getMessage());
+        }
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
     @Test
-    public void createFilmWithInvalidCreationDate() {
+    public void createFilmWithInvalidCreationDate() throws ValidationException {
         film.setReleaseDate(LocalDate.of(1800, 12, 12));
-        filmController.createFilm(film);
+        try {
+            filmController.createFilm(film);
+        }catch (ValidationException e){
+            System.out.println(e.getMessage());
+        }
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
     @Test
-    public void createFilmWithNegativeDuration() {
+    public void createFilmWithNegativeDuration() throws ValidationException {
         film.setDuration(Duration.ofSeconds(-100));
-        filmController.createFilm(film);
+        try {
+            filmController.createFilm(film);
+        }catch (ValidationException e){
+            System.out.println(e.getMessage());
+        }
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 

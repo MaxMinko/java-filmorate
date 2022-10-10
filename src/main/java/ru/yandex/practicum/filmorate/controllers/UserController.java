@@ -11,33 +11,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
     private Map<String, User> users = new HashMap();
 
-    @GetMapping("/users")
+    @GetMapping
     public Collection<User> getAllUsers() {
-        log.info("Текущее количество пользователей: "+users.size());
+        log.info("Текущее количество пользователей: " + users.size());
         return users.values();
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public User createUser(@RequestBody User user) {
         validationUser(user);
         log.info(user.toString());
         return user;
     }
 
-    @PutMapping("/user")
+    @PutMapping
     public User updateUser(@RequestBody User user) {
         try {
-            if (user.getEmail()==null||user.getEmail().isBlank()){
+            if (user.getEmail() == null || user.getEmail().isBlank()) {
                 throw new ValidationException("Электронная почта не может быть пустой.");
             }
-        }catch (ValidationException exception){
+        } catch (ValidationException exception) {
             System.out.println(exception.getMessage());
         }
-        users.put(user.getEmail(),user);
+        users.put(user.getEmail(), user);
         log.info(user.toString());
         return user;
     }
@@ -47,13 +48,13 @@ public class UserController {
             if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
                 throw new ValidationException("Электронная почта должна быть непустой и должна содержать @");
             }
-            if (user.getName().isEmpty()||user.getName().isBlank()) {
-                throw new ValidationException("Имя не может быть пустым.");
+            if (user.getName().isEmpty() || user.getName().isBlank()) {
+                user.setName(user.getLogin());
             }
             if (user.getBirthday().isAfter(LocalDate.now())) {
                 throw new ValidationException("День рождение не может быть в будущем.");
             }
-            if (users.containsKey(user.getEmail())){
+            if (users.containsKey(user.getEmail())) {
                 throw new ValidationException("Пользователь с таким email существует.");
             }
             users.put(user.getEmail(), user);
