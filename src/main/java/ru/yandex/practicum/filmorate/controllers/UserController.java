@@ -13,7 +13,7 @@ import java.util.Map;
 @RestController
 public class UserController {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
-    private Map<Integer, User> users = new HashMap();
+    private Map<String, User> users = new HashMap();
 
     @GetMapping("/users")
     public Collection<User> getAllUsers() {
@@ -30,7 +30,14 @@ public class UserController {
 
     @PutMapping("/user")
     public User updateUser(@RequestBody User user) {
-        validationUser(user);
+        try {
+            if (user.getEmail()==null||user.getEmail().isBlank()){
+                throw new ValidationException("Электронная почта не может быть пустой.");
+            }
+        }catch (ValidationException exception){
+            System.out.println(exception.getMessage());
+        }
+        users.put(user.getEmail(),user);
         log.info(user.toString());
         return user;
     }
@@ -46,7 +53,10 @@ public class UserController {
             if (user.getBirthday().isAfter(LocalDate.now())) {
                 throw new ValidationException("День рождение не может быть в будущем.");
             }
-            users.put(user.getId(), user);
+            if (users.containsKey(user.getEmail())){
+                throw new ValidationException("Пользователь с таким email существует.");
+            }
+            users.put(user.getEmail(), user);
         } catch (ValidationException exception) {
             System.out.println(exception.getMessage());
         }

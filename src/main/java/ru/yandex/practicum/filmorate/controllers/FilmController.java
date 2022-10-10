@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class FilmController {
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
-    private Map<Integer, Film> films = new HashMap();
+    private Map<Integer,Film> films = new HashMap<>();
 
     @GetMapping("/films")
     public Collection<Film> getAllFilms() {
@@ -30,13 +28,24 @@ public class FilmController {
 
     @PutMapping("/film")
     public Film updateFilm(@RequestBody Film film) {
-        validationFilm(film);
+        try {
+            if (films.containsKey(film.getId())) {
+                films.put(film.getId(), film);
+            } else {
+                throw new ValidationException("Пользователь для обновления не найден.");
+            }
+        }catch (ValidationException validationException){
+           log.info(validationException.getMessage());
+        }
         log.info(film.toString());
         return film;
     }
 
     public void validationFilm(Film film) {
         try {
+            if(films.containsValue(film)){
+                throw new ValidationException("Такой фильм "+film.getName()+" уже добавлен.");
+            }
             if (film.getDescription().length() > 200) {
                 throw new ValidationException("Количество символов в описании больше 200.");
             }
@@ -46,7 +55,7 @@ public class FilmController {
             if (film.getDuration().isNegative()) {
                 throw new ValidationException("Продолжительность фильма не может быть отрицательной.");
             }
-            films.put(film.getId(), film);
+            films.put(film.getId(),film);
         } catch (ValidationException exception) {
             log.info(exception.getMessage());
         }
