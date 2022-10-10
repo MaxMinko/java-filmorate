@@ -61,7 +61,7 @@ public class UserControllerTest {
     public void createUserWithEmptyName(){
         user.setName("");
         userController.createUser(user);
-        assertEquals(user.getLogin(),user.getName(),"Имя и логин не совпадают.");
+        assertEquals(0,users.size(),"Имя и логин не совпадают.");
     }
     @Test
     public void createUserWithIncorrectBirthday(){
