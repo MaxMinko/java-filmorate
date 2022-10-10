@@ -11,7 +11,7 @@ public class Film {
     private String name;
     private String description;
     private LocalDate releaseDate;
-    private Integer duration;
+    private int duration;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
