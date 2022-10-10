@@ -6,60 +6,61 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
-    private Map<String, User> users = new HashMap();
+    private List< User> users = new ArrayList<>();
 
-    @GetMapping
+    @GetMapping()
     public Collection<User> getAllUsers() {
         log.info("Текущее количество пользователей: " + users.size());
-        return users.values();
+        return users;
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        validationUser(user);
-        log.info(user.toString());
-        return user;
-    }
-
-    @PutMapping
-    public User updateUser(@RequestBody User user) {
-        try {
-            if (user.getEmail() == null || user.getEmail().isBlank()) {
-                throw new ValidationException("Электронная почта не может быть пустой.");
-            }
-        } catch (ValidationException exception) {
-            System.out.println(exception.getMessage());
+    @PostMapping()
+    public User createUser(@RequestBody User user) throws ValidationException {
+        if (users.contains(user)){
+            log.error("Такой пользователь уже существует!, {}", user);
+            throw new ValidationException("Такой пользователь уже существует!");
+        } else if (user.getEmail().isBlank() || !user.getEmail().contains("@")){
+            log.error("Электронная почта не может быть пустой и должна содержать символ - @, {}", user);
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ - @");
+        } else if (user.getLogin().equals("") || user.getLogin().contains(" ")){
+            log.error("Логин не может быть пустым и содержать пробелы!, {}", user);
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
+        } else if (user.getBirthday().isAfter(LocalDate.now())){
+            log.error("Дата рождения не может быть в будущем!, {}", user);
+            throw new ValidationException("Дата рождения не может быть в будущем!");
+        } else if (user.getName().isBlank()||user.getName()==null){
+            user.setName(user.getLogin());
+            users.add(user);
+            log.info("Добавлен новый пользователь, {}", user);
+            return user;
+        } else {
+            users.add(user);
+            log.info("Добавлен новый пользователь, {}", user);
+            return user;
         }
-        users.put(user.getEmail(), user);
-        log.info(user.toString());
-        return user;
     }
 
-    public void validationUser(User user) {
-        try {
-            if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-                throw new ValidationException("Электронная почта должна быть непустой и должна содержать @");
-            }
-            if (user.getName().isEmpty() || user.getName().isBlank()) {
+    @PutMapping()
+    public User updateUser(@RequestBody User user) throws ValidationException {
+        if (!users.contains(user)){
+            log.error("Такого пользователя не существует!, {}", user);
+            throw new ValidationException("Такого пользователя не существует!");
+        } else {
+            users.remove(user);
+            if (user.getName().isBlank()||user.getName()==null){
                 user.setName(user.getLogin());
             }
-            if (user.getBirthday().isAfter(LocalDate.now())) {
-                throw new ValidationException("День рождение не может быть в будущем.");
-            }
-            if (users.containsKey(user.getEmail())) {
-                throw new ValidationException("Пользователь с таким email существует.");
-            }
-            users.put(user.getEmail(), user);
-        } catch (ValidationException exception) {
-            System.out.println(exception.getMessage());
+            users.add(user);
+            log.info("Пользователь обновлен - , {}", user);
+            return user;
         }
+
     }
+
 }

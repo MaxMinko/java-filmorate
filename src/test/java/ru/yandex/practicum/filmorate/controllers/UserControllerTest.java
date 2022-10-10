@@ -25,13 +25,23 @@ public class UserControllerTest {
 
     @Test
     public void getAllUsers() {
-        userController.createUser(user);
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(1, userController.getAllUsers().size(), "Неверное количевто пользователей");
     }
 
     @Test
     public void createUser() {
-        userController.createUser(user);
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(true, userController.getAllUsers().contains(user), "Пользователи не совпадают.");
     }
 
@@ -39,34 +49,64 @@ public class UserControllerTest {
     public void updateUser() {
         User updatedUser = new User(1, "UpdatedTestEmail@", "updatedTestLogin", "UpdatedTestName",
                 LocalDate.of(2001, 1, 1));
-        userController.createUser(user);
-        userController.updateUser(updatedUser);
+        try {
+            userController.createUser(user);
+            userController.updateUser(updatedUser);
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
         assertEquals(true, userController.getAllUsers().contains(updatedUser), "Пользователь не обновился.");
     }
 
     @Test
     public void createUserWithIncorrectEmail() {
         user.setEmail("emailAdress");
-        userController.createUser(user);
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+
         assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
 
     @Test
     public void createUserWithEmptyEmail() {
         user.setEmail("");
-        userController.createUser(user);
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+
         assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
+
     @Test
-    public void createUserWithEmptyName(){
+    public void createUserWithEmptyName() {
         user.setName("");
-        userController.createUser(user);
-        assertEquals(0,users.size(),"Имя и логин не совпадают.");
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+
+        assertEquals(0, users.size(), "Имя и логин не совпадают.");
     }
+
     @Test
-    public void createUserWithIncorrectBirthday(){
-       user.setBirthday(LocalDate.of(3000,12,12));
-       userController.createUser(user);
-       assertEquals(0,userController.getAllUsers().size(),"Неверное количество пользователей.");
+    public void createUserWithIncorrectBirthday() {
+        user.setBirthday(LocalDate.of(3000, 12, 12));
+        try {
+            userController.createUser(user);
+
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+
+        assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
 }
