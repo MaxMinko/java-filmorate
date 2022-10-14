@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ public class UserControllerTest {
 
     @Test
     public void getAllUsers() {
-            userController.createUser(user);
+        userController.createUser(user);
         assertEquals(1, userController.getAllUsers().size(), "Неверное количевто пользователей");
     }
 
@@ -47,23 +48,31 @@ public class UserControllerTest {
     @Test
     public void createUserWithIncorrectEmail() {
         user.setEmail("emailAdress");
-
-        userController.createUser(user);
-
+        final ValidationException exception = assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                userController.createUser(user);
+            }
+        });
+        assertEquals("Электронная почта не может быть пустой и должна содержать символ - @", exception.getMessage());
         assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
 
     @Test
     public void createUserWithEmptyEmail() {
         user.setEmail("");
-
-        userController.createUser(user);
-
+        final ValidationException exception = assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                userController.createUser(user);
+            }
+        });
+        assertEquals("Электронная почта не может быть пустой и должна содержать символ - @", exception.getMessage());
         assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
 
     @Test
-    public void createUserWithEmptyName() {
+    public void createUserWithEmptyName() throws ValidationException {
         user.setName("");
         userController.createUser(user);
         assertEquals(0, users.size(), "Имя и логин не совпадают.");
@@ -72,7 +81,13 @@ public class UserControllerTest {
     @Test
     public void createUserWithIncorrectBirthday() {
         user.setBirthday(LocalDate.of(3000, 12, 12));
-        userController.createUser(user);
+        final ValidationException exception = assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                userController.createUser(user);
+            }
+        });
+        assertEquals("Дата рождения не может быть в будущем!", exception.getMessage());
         assertEquals(0, userController.getAllUsers().size(), "Неверное количество пользователей.");
     }
 }

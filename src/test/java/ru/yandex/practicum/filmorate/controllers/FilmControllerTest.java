@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilmControllerTest {
     private Map<Integer, Film> films;
@@ -20,7 +22,7 @@ public class FilmControllerTest {
         filmController = new FilmController();
         films = new HashMap<>();
         film = new Film(1, "TestFilm", "TestFilmDescription", LocalDate.of(2000, 12,
-                12),100);
+                12), 100);
     }
 
     @Test
@@ -49,27 +51,39 @@ public class FilmControllerTest {
         film.setDescription("TestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFil" +
                 "mWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescriptionTestFilmWithLargeDescripti" +
                 "onTestFilmWithLargeDescription");
-
-        filmController.createFilm(film);
-
+        final ValidationException exception =assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                filmController.createFilm(film);
+            }
+        });
+        assertEquals("Максимальная длина описания — 200 символов!",exception.getMessage());
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
     @Test
     public void createFilmWithInvalidCreationDate() {
         film.setReleaseDate(LocalDate.of(1800, 12, 12));
-
-        filmController.createFilm(film);
-
+        final ValidationException exception =assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                filmController.createFilm(film);
+            }
+        });
+        assertEquals("Дата релиза не должна быть раньше 28 декабря 1895!",exception.getMessage());
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
     @Test
     public void createFilmWithNegativeDuration() {
         film.setDuration(-100);
-
-        filmController.createFilm(film);
-
+        final ValidationException exception =assertThrows(ValidationException.class, new Executable() {
+            @Override
+            public void execute() throws ValidationException {
+                filmController.createFilm(film);
+            }
+        });
+        assertEquals("Продолжительность фильма должна быть положительна!",exception.getMessage());
         assertEquals(0, filmController.getAllFilms().size(), "Неверное количество фильмов.");
     }
 
