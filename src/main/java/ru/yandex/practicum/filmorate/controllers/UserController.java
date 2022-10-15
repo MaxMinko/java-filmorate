@@ -26,10 +26,7 @@ public class UserController {
 
     @PostMapping()
     public User createUser(@RequestBody User user) {
-        checkId(user);
-        checkEmail(user);
-        checkLogin(user);
-        checkBirthday(user);
+        checkUser(user);
         if (user.getName() == null) {
             user.setName(user.getLogin());
             user.setId(userId++);
@@ -45,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public User updateUser(@RequestBody User user)  {
+    public User updateUser(@RequestBody User user) {
         if (!users.containsKey(user.getId())) {
             log.error("Такого пользователя не существует!");
             throw new ValidationException("Такого пользователя не существует!");
@@ -59,28 +56,19 @@ public class UserController {
         }
     }
 
-    private void checkLogin(User user) {
+    private void checkUser(User user) {
         if (user.getLogin().contains("") && user.getLogin().contains(" ")) {
             log.error("Логин не может быть пустым и содержать пробелы!");
             throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
         }
-    }
-
-    private void checkEmail(User user)  {
         if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.error("Электронная почта не может быть пустой и должна содержать символ - @");
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ - @");
         }
-    }
-
-    private void checkBirthday(User user) {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Дата рождения не может быть в будущем!");
             throw new ValidationException("Дата рождения не может быть в будущем!");
         }
-    }
-
-    private void checkId(User user)  {
         if (users.containsKey(user.getId())) {
             log.error("Такой пользователь уже существует!");
             throw new ValidationException("Такой пользователь уже существует!");
