@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.controllers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.model.User;
 
 import java.time.LocalDate;
 import java.util.HashMap;
