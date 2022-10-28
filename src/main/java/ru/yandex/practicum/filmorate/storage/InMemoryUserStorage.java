@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,13 +17,14 @@ public class InMemoryUserStorage implements UserStorage {
     private final static Logger log = LoggerFactory.getLogger(UserController.class);
     private Map<Integer, User> users = new HashMap<>();
     private int userId = 1;
+    private Validator validator = new Validator(this);
 
     @Override
     public User addUser(User user) {
         if (users.containsValue(user)) {
             throw new ValidationException("Такой пользователь уже есть!");
         }
-        checkUser(user);
+        validator.checkUser(user);
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
             user.setId(userId++);
@@ -77,22 +77,5 @@ public class InMemoryUserStorage implements UserStorage {
         return users;
     }
 
-    private void checkUser(User user) {
-        if (user.getLogin().contains("") && user.getLogin().contains(" ")) {
-            log.error("Логин не может быть пустым и содержать пробелы!");
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
-        }
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.error("Электронная почта не может быть пустой и должна содержать символ - @");
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ - @");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем!");
-            throw new ValidationException("Дата рождения не может быть в будущем!");
-        }
-        if (users.containsKey(user.getId())) {
-            log.error("Такой пользователь уже существует!");
-            throw new ValidationException("Такой пользователь уже существует!");
-        }
-    }
+
 }
