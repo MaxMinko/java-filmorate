@@ -16,11 +16,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final static Logger log = LoggerFactory.getLogger(FilmController.class);
     public Map<Integer, Film> films = new HashMap<>();
     private int filmId = 1;
-    Validator validator=new Validator(this);
+    private Validator validator = new Validator(this);
 
     @Override
     public Film addFilm(Film film) {
-       validator.checkFilm(film);
+        validator.checkFilm(film);
         film.setId(filmId++);
         films.put(film.getId(), film);
         return film;
