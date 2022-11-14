@@ -1,77 +1,62 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final static Logger log = LoggerFactory.getLogger(UserController.class);
-    private Map<Integer, User> users = new HashMap<>();
-    private int userId = 1;
+    private final UserService userService;
+
+    @Autowired
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping()
     public Collection<User> getAllUsers() {
-        log.info("Текущее количество пользователей: " + users.size());
-        return users.values();
+        return userService.getAllUsers();
     }
-
 
     @PostMapping()
     public User createUser(@RequestBody User user) {
-        checkUser(user);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-            user.setId(userId++);
-            users.put(user.getId(), user);
-            log.info("Добавлен новый пользователь");
-            return user;
-        } else {
-            user.setId(userId++);
-            users.put(user.getId(), user);
-            log.info("Добавлен новый пользователь");
-            return user;
-        }
+        return userService.addUser(user);
     }
 
     @PutMapping()
     public User updateUser(@RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("Такого пользователя не существует!");
-            throw new ValidationException("Такого пользователя не существует!");
-        } else {
-            if (user.getName().isBlank() || user.getName() == null) {
-                user.setName(user.getLogin());
-            }
-            users.put(user.getId(), user);
-            log.info("Пользователь обновлен");
-            return user;
-        }
+        return userService.updateUser(user);
     }
 
-    private void checkUser(User user) {
-        if (user.getLogin().contains("") && user.getLogin().contains(" ")) {
-            log.error("Логин не может быть пустым и содержать пробелы!");
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
-        }
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.error("Электронная почта не может быть пустой и должна содержать символ - @");
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ - @");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем!");
-            throw new ValidationException("Дата рождения не может быть в будущем!");
-        }
-        if (users.containsKey(user.getId())) {
-            log.error("Такой пользователь уже существует!");
-            throw new ValidationException("Такой пользователь уже существует!");
-        }
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        userService.addFriend(id, friendId);
     }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable("id") int id) {
+        return userService.getFriend(id);
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") int id) {
+        return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable("id") int id, @PathVariable("otherId") int otherId) {
+        return userService.getCommonFriend(id, otherId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        userService.removeFriend(id, friendId);
+    }
+
+
 }

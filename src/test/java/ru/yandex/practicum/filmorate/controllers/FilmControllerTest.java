@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.controllers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -16,10 +19,14 @@ public class FilmControllerTest {
     private Map<Integer, Film> films;
     FilmController filmController;
     Film film;
+    InMemoryFilmStorage inMemoryFilmStorage;
+    FilmService filmService;
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
+        inMemoryFilmStorage=new InMemoryFilmStorage();
+        filmService =new FilmService(inMemoryFilmStorage);
+        filmController = new FilmController(filmService);
         films = new HashMap<>();
         film = new Film(1, "TestFilm", "TestFilmDescription", LocalDate.of(2000, 12,
                 12), 100);
