@@ -2,24 +2,24 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.UsersDao;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
+    private final UsersDao usersDao;
     private final UserStorage inMemoryUserStorage;
 
     @Autowired
-   public UserService(UserStorage inMemoryUserStorage) {
+   public UserService(UserStorage inMemoryUserStorage, UsersDao usersDao) {
         this.inMemoryUserStorage = inMemoryUserStorage;
+        this.usersDao=usersDao;
     }
-
+/*
     public void addFriend(int userId, int friendsId) {
         if (userId <= 0 || friendsId <= 0) {
             throw new UserNotFoundException("Id должен быть больше нуля.");
@@ -27,6 +27,8 @@ public class UserService {
         inMemoryUserStorage.getUsers().get(userId).getFriends().add(friendsId);
         inMemoryUserStorage.getUsers().get(friendsId).getFriends().add(userId);
     }
+
+ */
 
     public void removeFriend(int userId, int friendId) {
         inMemoryUserStorage.getUsers().get(userId).getFriends().remove(friendId);
@@ -59,12 +61,10 @@ public class UserService {
         return friends;
     }
 
-    public User addUser(User user) {
-        return inMemoryUserStorage.addUser(user);
-    }
 
-    public User updateUser(User user) {
-        return inMemoryUserStorage.updateUser(user);
+
+    public void updateUser(User user) {
+         usersDao.updateUser(user);
     }
 
     public Collection<User> getAllUsers() {
@@ -80,4 +80,14 @@ public class UserService {
     }
 
 
+    public Optional<User>getUserById(int  id){
+        return usersDao.findUserById(id);
+    }
+
+    public void addUser(User user){
+         usersDao.addUser(user);
+    }
+public void  addFriend(int userId,int friendId){
+    usersDao.addFriend(userId,friendId);
+}
 }

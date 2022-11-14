@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -24,13 +25,13 @@ public class UserController {
     }
 
     @PostMapping()
-    public User createUser(@RequestBody User user) {
-        return userService.addUser(user);
+    public void createUser(@RequestBody User user) {
+       userService.addUser(user);
     }
 
     @PutMapping()
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public void updateUser(@RequestBody User user) {
+         userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -44,8 +45,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") int id) {
-        return userService.getUser(id);
+    public Optional<User> getUser(@PathVariable("id") int id) {
+         return  userService.getUserById(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -57,6 +58,5 @@ public class UserController {
     public void removeFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
         userService.removeFriend(id, friendId);
     }
-
 
 }

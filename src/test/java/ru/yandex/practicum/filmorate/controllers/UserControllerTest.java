@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.controllers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,15 +23,16 @@ public class UserControllerTest {
     User user;
     UserService userService;
     InMemoryUserStorage inMemoryUserStorage;
+    UserDaoImpl userDaoImpl;
 
     @BeforeEach
     void setUp() {
         inMemoryUserStorage=new InMemoryUserStorage();
-        userService=new UserService(inMemoryUserStorage);
+        userDaoImpl=new UserDaoImpl(new JdbcTemplate());
+        userService=new UserService(inMemoryUserStorage,userDaoImpl);
         userController = new UserController(userService);
         users = new HashMap<>();
-        user = new User(1, "testEmail@", "testLogin", "testName", LocalDate.of(2000, 10,
-                11));
+        user = new User(1, "testEmail@", "testLogin", "testName",   new Date(2000,10,11));
     }
 
     @Test
@@ -47,7 +50,7 @@ public class UserControllerTest {
     @Test
     public void updateUser() {
         User updatedUser = new User(1, "UpdatedTestEmail@", "updatedTestLogin", "UpdatedTestName",
-                LocalDate.of(2001, 1, 1));
+                new Date(2001, 1, 1));
         userController.createUser(user);
         userController.updateUser(updatedUser);
         assertEquals(true, userController.getAllUsers().contains(updatedUser), "Пользователь не обновился.");
@@ -88,7 +91,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserWithIncorrectBirthday() {
-        user.setBirthday(LocalDate.of(3000, 12, 12));
+        user.setBirthday(new Date(3000, 12, 12));
         final ValidationException exception = assertThrows(ValidationException.class, new Executable() {
             @Override
             public void execute() throws ValidationException {

@@ -28,8 +28,8 @@ public class FilmControllerTest {
         filmService =new FilmService(inMemoryFilmStorage);
         filmController = new FilmController(filmService);
         films = new HashMap<>();
-        film = new Film(1, "TestFilm", "TestFilmDescription", LocalDate.of(2000, 12,
-                12), 100);
+        film = new Film(1, "TestFilm", "TestFilmDescription",LocalDate.of(2000, 12,
+                12), 100,"PG-13");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class FilmControllerTest {
     @Test
     public void updateFilm() {
         Film updatedFilm = new Film(1, "UpdatedTestFilm", "UpdatedTestFilmDescription", LocalDate.of(
-                2000, 12, 12), 100);
+                2000, 12, 12), 100,"PG-13");
         filmController.createFilm(film);
         filmController.updateFilm(updatedFilm);
         assertEquals(true, filmController.getAllFilms().contains(updatedFilm), "Задачи не совпадают.");

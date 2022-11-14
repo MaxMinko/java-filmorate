@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 
@@ -54,7 +55,7 @@ public class Validator {
             log.error("Электронная почта не может быть пустой и должна содержать символ - @");
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ - @");
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday().after(Date.valueOf(LocalDate.now()))) {
             log.error("Дата рождения не может быть в будущем!");
             throw new ValidationException("Дата рождения не может быть в будущем!");
         }
