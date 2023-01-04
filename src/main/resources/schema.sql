@@ -1,4 +1,12 @@
 
+DROP table FILM_genre;
+DROP table FRIENDSHIPS;
+DROP table MPA;
+DROP table MPA_NAME;
+DROP table GENRES;
+DROP table USERS;
+DROP table films;
+
 
 CREATE table IF NOT EXISTS users
 (
