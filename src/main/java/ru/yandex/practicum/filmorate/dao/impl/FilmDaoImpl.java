@@ -77,7 +77,7 @@ public class FilmDaoImpl implements FilmDao {
     public void addLike(int filmId, int id) {
         String sqlQuery = "insert into likes (film_id,user_id)" + "values(?,?)";
         jdbcTemplate.update(sqlQuery, filmId, id);
-        log.info("Лайк фильму "+filmId+" пользователя "+id+" добавлен.");
+        log.info("Лайк фильму " + filmId + " пользователя " + id + " добавлен.");
     }
 
     @Override
@@ -88,7 +88,7 @@ public class FilmDaoImpl implements FilmDao {
         }
         String sqlQuery = "delete from likes where film_id = ? and user_id=?";
         jdbcTemplate.update(sqlQuery, filmId, id);
-        log.info("Лайк фильму "+filmId+" пользователя "+id+" удален.");
+        log.info("Лайк фильму " + filmId + " пользователя " + id + " удален.");
     }
 
     @Override
@@ -101,37 +101,26 @@ public class FilmDaoImpl implements FilmDao {
             userRows = jdbcTemplate.queryForRowSet("select COUNT(USER_ID),film_id from LIKES GROUP BY(FILM_ID)  ORDER BY COUNT(USER_ID) DESC LIMIT ?", id);
         }
         if (userRows.next()) {
-            SqlRowSet popularsFilm = jdbcTemplate.queryForRowSet("select * from films where id=?", userRows.getInt("film_id"));
-            if (popularsFilm.next()) {
-                SqlRowSet popularFilmMPA = jdbcTemplate.queryForRowSet("select mpa_id from MPA where film_id=?", userRows.getInt("film_id"));
-                if (popularFilmMPA.next()) {
-                    MPA mpa = new MPA(popularFilmMPA.getInt("MPA_ID"));
-                    Film film = new Film(
-                            popularsFilm.getInt("id"),
-                            popularsFilm.getString("name"),
-                            popularsFilm.getString("description"),
-                            popularsFilm.getDate("releaseDate").toLocalDate(),
-                            popularsFilm.getInt("duration"),
-                            mpa
-                    );
-                    popularFilm.add(film);
-                }
-            }
+            popularFilm.add(getFilm(userRows.getInt("id")).get());
+
         } else {
             SqlRowSet popularFilmNo = jdbcTemplate.queryForRowSet("select * from films GROUP BY(id) ORDER BY id;");
             while (popularFilmNo.next()) {
                 SqlRowSet popularFilmMPA1 = jdbcTemplate.queryForRowSet("select mpa_id from MPA where film_id=?", popularFilmNo.getInt("id"));
                 if (popularFilmMPA1.next()) {
-                    MPA mpa = new MPA(popularFilmMPA1.getInt("MPA_ID"));
-                    Film film = new Film(
-                            popularFilmNo.getInt("id"),
-                            popularFilmNo.getString("name"),
-                            popularFilmNo.getString("description"),
-                            popularFilmNo.getDate("releaseDate").toLocalDate(),
-                            popularFilmNo.getInt("duration"),
-                            mpa
-                    );
-                    popularFilm.add(film);
+                    SqlRowSet mpaName=jdbcTemplate.queryForRowSet("select name_mpa from MPA_NAME where MPA_ID=?",popularFilmMPA1.getInt("MPA_ID"));
+                   if (mpaName.next()) {
+                       MPA mpa = new MPA(popularFilmMPA1.getInt("MPA_ID"), mpaName.getString("name_mpa"));
+                       Film film = new Film(
+                               popularFilmNo.getInt("id"),
+                               popularFilmNo.getString("name"),
+                               popularFilmNo.getString("description"),
+                               popularFilmNo.getDate("releaseDate").toLocalDate(),
+                               popularFilmNo.getInt("duration"),
+                               mpa
+                       );
+                       popularFilm.add(film);
+                   }
                 }
             }
         }
@@ -175,7 +164,7 @@ public class FilmDaoImpl implements FilmDao {
                     film.getGenres().add(genre);
                 }
             }
-            log.info("Найден фильм: "+ film.getId());
+            log.info("Найден фильм: " + film.getId());
             return Optional.of(film);
         } else {
             throw new FilmNotFoundException("Фильм с идентификатором " + id + " не найден.");
