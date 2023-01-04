@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +16,6 @@ public class User {
     private String email;
     private String login;
     private String name;
-    private Date birthday;
+    private LocalDate birthday;
     private final Set<Integer> friends=new HashSet<>();
 }

@@ -25,13 +25,13 @@ public class UserController {
     }
 
     @PostMapping()
-    public void createUser(@RequestBody User user) {
-       userService.addUser(user);
+    public Optional<User> createUser(@RequestBody User user) {
+        return userService.addUser(user);
     }
 
     @PutMapping()
-    public void updateUser(@RequestBody User user) {
-         userService.updateUser(user);
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -40,17 +40,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable("id") int id) {
-        return userService.getFriend(id);
+    public List<Optional<User>> getFriends(@PathVariable("id") int id) {
+        return userService.getFriends(id);
     }
 
     @GetMapping("/{id}")
     public Optional<User> getUser(@PathVariable("id") int id) {
-         return  userService.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getCommonFriends(@PathVariable("id") int id, @PathVariable("otherId") int otherId) {
+    public Collection<Optional<User>> getCommonFriends(@PathVariable("id") int id, @PathVariable("otherId") int otherId) {
         return userService.getCommonFriend(id, otherId);
     }
 

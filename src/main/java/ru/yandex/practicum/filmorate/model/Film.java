@@ -17,9 +17,11 @@ public class Film implements Comparable{
     private String description;
     private LocalDate releaseDate;
     private int duration;
-    private String rate;
+    private  MPA mpa;
+    private final Set<Genre> genres =new HashSet<>();
     private final Set<Integer> likes=new HashSet<>();
-    private final Set<String> genre =new HashSet<>();
+
+
 
     @Override
     public int compareTo(Object o){
