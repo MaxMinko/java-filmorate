@@ -71,6 +71,18 @@ CREATE TABLE IF NOT EXISTS likes
             REFERENCES users (id),
    constraint likes_pk PRIMARY KEY (film_id, user_id)
 );
+INSERT INTO genres (GENRE_NAME)
+VALUES ('Комедия'), ('Драма'),('Мультфильм'),
+       ('Триллер'),
+       ('Документальный'),
+       ('Боевик');
+
+INSERT INTO MPA_NAME (NAME_MPA)
+VALUES ('G'), ('PG'),('PG-13'),
+       ('R'),
+       ('NC-17');
+
+
 
 
 
