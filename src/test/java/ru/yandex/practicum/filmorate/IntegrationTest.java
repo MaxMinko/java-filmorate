@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,24 +28,21 @@ public class IntegrationTest {
     User testUser = new User(1, "testMail@ru", "testLogin", "testName", LocalDate.of(2000,
             12, 12));
     Film testFilm = new Film(1, "testFilm", "testDescription", LocalDate.of(1990, 12,
-            12), 100, new MPA(1));
+            12), 100, new MPA(1,"G"));
 
     @Test
-    @Order(1)
     public void testFindUserById() {
         userDao.addUser(testUser);
         assertEquals(testUser, userDao.findUserById(1).get());
     }
 
     @Test
-    @Order(2)
     public void testGetAllUsers() {
         userDao.addUser(testUser);
         assertEquals(1, userDao.getAllUsers().size());
     }
 
     @Test
-    @Order(3)
     public void testAddFriend() {
         userDao.addUser(testUser);
         User testUserFriend = new User(2, "testFriendEmail@", "testFriendLogin", "testFriendLogin", LocalDate.of(2000, 1, 1));
@@ -56,7 +52,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(4)
     public void testUpdateUser() {
         userDao.addUser(testUser);
         User testUserUpdate = new User(1, "updateTestMail@ru", "updateTestLogin", "updateTestName",
@@ -66,7 +61,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(5)
     public void testRemoveFriend() {
         userDao.addUser(testUser);
         User testUserFriend = new User(2, "testFriendEmail@", "testFriendLogin", "testFriendLogin",
@@ -78,7 +72,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(6)
     public void testGetCommonFriend() {
         userDao.addUser(testUser);
         User testUserFriend = new User(2, "testFriendEmail@", "testFriendLogin", "testFriendLogin",
@@ -94,14 +87,12 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(7)
     public void testAddFilm() {
         filmDao.addFilm(testFilm);
         assertEquals(testFilm, filmDao.getFilm(1).get());
     }
 
     @Test
-    @Order(8)
     public void testUpdateFilm() {
         filmDao.addFilm(testFilm);
         Film testUpdateFilm = new Film(1, "updateName", "updateDescription", LocalDate.of(1990, 12,
@@ -111,7 +102,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(9)
     public void testAddLike() {
         filmDao.addFilm(testFilm);
         userDao.addUser(testUser);
@@ -120,7 +110,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(10)
     public void testDeleteLike() {
         filmDao.addFilm(testFilm);
         userDao.addUser(testUser);
@@ -131,7 +120,6 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(11)
     public void testGetPopularFilm() {
         filmDao.addFilm(testFilm);
         userDao.addUser(testUser);
@@ -140,26 +128,22 @@ public class IntegrationTest {
     }
 
     @Test
-    @Order(12)
     public void testGetAllGenres() {
         assertEquals(6, filmDao.getAllGenres().size());
     }
 
     @Test
-    @Order(13)
     public void testGetMpaById() {
         assertEquals(1, filmDao.getMPAById(1).getId());
         assertEquals("G", filmDao.getMPAById(1).getName());
     }
 
     @Test
-    @Order(14)
     public void testGetAllMPA() {
         assertEquals(5, filmDao.getAllMPA().size());
     }
 
     @Test
-    @Order(15)
     public void testGetGenresById() {
         assertEquals(1, filmDao.getGenresById(1).getId());
         assertEquals("Комедия", filmDao.getGenresById(1).getName());
