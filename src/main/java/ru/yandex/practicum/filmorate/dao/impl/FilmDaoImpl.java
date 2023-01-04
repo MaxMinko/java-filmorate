@@ -12,10 +12,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.Validator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class FilmDaoImpl implements FilmDao {
@@ -101,26 +98,37 @@ public class FilmDaoImpl implements FilmDao {
             userRows = jdbcTemplate.queryForRowSet("select COUNT(USER_ID),film_id from LIKES GROUP BY(FILM_ID)  ORDER BY COUNT(USER_ID) DESC LIMIT ?", id);
         }
         if (userRows.next()) {
-            popularFilm.add(getFilm(userRows.getInt("id")).get());
-
+            SqlRowSet popularsFilm = jdbcTemplate.queryForRowSet("select * from films where id=?", userRows.getInt("film_id"));
+            if (popularsFilm.next()) {
+                SqlRowSet popularFilmMPA = jdbcTemplate.queryForRowSet("select mpa_id from MPA where film_id=?", userRows.getInt("film_id"));
+                if (popularFilmMPA.next()) {
+                    MPA mpa = getMPAById(popularFilmMPA.getInt("MPA_ID"));
+                    Film film = new Film(
+                            popularsFilm.getInt("id"),
+                            popularsFilm.getString("name"),
+                            popularsFilm.getString("description"),
+                            popularsFilm.getDate("releaseDate").toLocalDate(),
+                            popularsFilm.getInt("duration"),
+                            mpa
+                    );
+                    popularFilm.add(film);
+                }
+            }
         } else {
             SqlRowSet popularFilmNo = jdbcTemplate.queryForRowSet("select * from films GROUP BY(id) ORDER BY id;");
             while (popularFilmNo.next()) {
                 SqlRowSet popularFilmMPA1 = jdbcTemplate.queryForRowSet("select mpa_id from MPA where film_id=?", popularFilmNo.getInt("id"));
                 if (popularFilmMPA1.next()) {
-                    SqlRowSet mpaName=jdbcTemplate.queryForRowSet("select name_mpa from MPA_NAME where MPA_ID=?",popularFilmMPA1.getInt("MPA_ID"));
-                   if (mpaName.next()) {
-                       MPA mpa = new MPA(popularFilmMPA1.getInt("MPA_ID"), mpaName.getString("name_mpa"));
-                       Film film = new Film(
-                               popularFilmNo.getInt("id"),
-                               popularFilmNo.getString("name"),
-                               popularFilmNo.getString("description"),
-                               popularFilmNo.getDate("releaseDate").toLocalDate(),
-                               popularFilmNo.getInt("duration"),
-                               mpa
-                       );
-                       popularFilm.add(film);
-                   }
+                    MPA mpa = getMPAById(popularFilmMPA1.getInt("MPA_ID"));
+                    Film film = new Film(
+                            popularFilmNo.getInt("id"),
+                            popularFilmNo.getString("name"),
+                            popularFilmNo.getString("description"),
+                            popularFilmNo.getDate("releaseDate").toLocalDate(),
+                            popularFilmNo.getInt("duration"),
+                            mpa
+                    );
+                    popularFilm.add(film);
                 }
             }
         }
