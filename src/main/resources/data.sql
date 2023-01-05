@@ -1,3 +1,4 @@
+
 INSERT INTO genres (GENRE_NAME)
 VALUES ('Комедия'), ('Драма'),('Мультфильм'),
        ('Триллер'),
