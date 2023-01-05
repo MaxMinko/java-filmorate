@@ -182,7 +182,7 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public List<Genre> getAllGenres() {
         List<Genre> genres = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from genres");
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from genres where GENRE_ID<7");
         while (userRows.next()) {
             Genre genre = new Genre(userRows.getInt("GENRE_ID"), userRows.getString("GENRE_NAME"));
             genres.add(genre);
@@ -201,7 +201,7 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public List<MPA> getAllMPA() {
         List<MPA> mpas = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from MPA_NAME");
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from MPA_NAME where  MPA_id <6");
         while (userRows.next()) {
             MPA mpa = new MPA(userRows.getInt("MPA_ID"), userRows.getString("NAME_MPA"));
             mpas.add(mpa);
