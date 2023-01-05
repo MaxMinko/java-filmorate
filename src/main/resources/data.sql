@@ -1,5 +1,4 @@
-DELETE
-from GENRES;
+
 INSERT INTO genres
 VALUES (1, 'Комедия'),
        (2, 'Драма'),
@@ -8,8 +7,7 @@ VALUES (1, 'Комедия'),
        (5, 'Документальный'),
        (6, 'Боевик');
 
-DELETE
-FROM MPA_NAME;
+
 INSERT INTO MPA_NAME
 VALUES ('G', 1),
        ('PG', 2),
