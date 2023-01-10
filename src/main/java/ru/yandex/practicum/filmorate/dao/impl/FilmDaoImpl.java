@@ -12,16 +12,22 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.Validator;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FilmDaoImpl implements FilmDao {
     private final Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
     private final JdbcTemplate jdbcTemplate;
-    private final Validator validator = new Validator(this);
+    private final Validator validator;
 
-    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
+
+    public FilmDaoImpl(JdbcTemplate jdbcTemplate, Validator validator) {
         this.jdbcTemplate = jdbcTemplate;
+        this.validator = validator;
     }
 
     @Override

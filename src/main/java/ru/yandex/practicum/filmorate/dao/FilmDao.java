@@ -9,16 +9,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FilmDao {
-Film addFilm(Film film);
-Optional<Film> updateFilm(Film film);
+    Film addFilm(Film film);
+
+    Optional<Film> updateFilm(Film film);
+
     void addLike(int filmId, int id);
 
     void deleteLike(int filmId, int id);
+
     Collection<Film> getPopularFilm(int id);
-    public Optional<Film> getFilm(int id);
+
+    Optional<Film> getFilm(int id);
+
     Genre getGenresById(int id);
+
     List<Genre> getAllGenres();
+
     MPA getMPAById(int id);
+
     List<MPA> getAllMPA();
+
     Collection<Film> getAllFilms();
 }

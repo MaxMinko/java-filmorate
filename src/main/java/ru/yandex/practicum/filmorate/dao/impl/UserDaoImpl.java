@@ -12,15 +12,17 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Validator;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Component
 public class UserDaoImpl implements UsersDao {
     private final Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
     private final JdbcTemplate jdbcTemplate;
-    private final Validator validator = new Validator(this);
+    private final Validator validator;
 
-    public UserDaoImpl(JdbcTemplate jdbcTemplate) {
+    public UserDaoImpl(JdbcTemplate jdbcTemplate, Validator validator) {
         this.jdbcTemplate = jdbcTemplate;
+        this.validator = validator;
     }
 
     @Override
@@ -78,6 +80,7 @@ public class UserDaoImpl implements UsersDao {
         log.info("Пользователь обновлен");
         return user;
     }
+
     @Override
     public void addFriend(int userId, int friendId) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select friend_id from friendships where user_Id=?", userId);
@@ -90,8 +93,8 @@ public class UserDaoImpl implements UsersDao {
             jdbcTemplate.update(sqlQuery, userId, friendId);
             log.info("Пользователь {} добавлен в друзья " + friendId);
         } else {
-            log.info("Пользователь "+userId+" уже ялвяется другом пользователя "+ friendId);
-            throw new UserAlreadyFriendsException("Пользователь "+userId+" уже ялвяется другом пользователя " + friendId);
+            log.info("Пользователь " + userId + " уже ялвяется другом пользователя " + friendId);
+            throw new UserAlreadyFriendsException("Пользователь " + userId + " уже ялвяется другом пользователя " + friendId);
         }
     }
 
@@ -100,18 +103,17 @@ public class UserDaoImpl implements UsersDao {
         List<User> users = new ArrayList<>();
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users");
         while (userRows.next()) {
-            User user = new User(
-                    userRows.getInt("id"),
-                    userRows.getString("email"),
-                    userRows.getString("login"),
-                    userRows.getString("name"),
-                    userRows.getDate("birthday").toLocalDate());
-            SqlRowSet friendShip = jdbcTemplate.queryForRowSet("select friend_id from friendships where user_id=?", userRows.getInt("id"));
-            while (friendShip.next()) {
-                user.getFriends().add(friendShip.getInt("friend_id"));
-            }
-            log.info("Найден пользователь: "+ user.getId());
-            users.add(user);
+            Stream.of(userRows).forEach(e -> users.add(new User(
+                    e.getInt("id"),
+                    e.getString("email"),
+                    e.getString("login"),
+                    e.getString("name"),
+                    e.getDate("birthday").toLocalDate())));
+        }
+        SqlRowSet friendShip = jdbcTemplate.queryForRowSet("select * from friendships");
+        while (friendShip.next()) {
+            Stream.of(friendShip).forEach(x -> users.get(x.getInt("user_id")).getFriends()
+                    .add(x.getInt("friend_id")));
         }
         return users;
     }

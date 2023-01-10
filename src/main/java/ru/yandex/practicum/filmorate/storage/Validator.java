@@ -4,30 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import ru.yandex.practicum.filmorate.dao.impl.FilmDaoImpl;
-import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-
+@Component
 public class Validator {
-
-    UserDaoImpl userDao;
-    FilmDaoImpl filmDao;
     private final static Logger log = LoggerFactory.getLogger(Validator.class);
 
-
-    public Validator(UserDaoImpl userDao){
-        this.userDao=userDao;
-    }
-    public Validator(FilmDaoImpl filmDao){
-        this.filmDao=filmDao;
-    }
-
-    public void checkUserForDataBase(User user, JdbcTemplate jdbcTemplate){
+    public void checkUserForDataBase(User user, JdbcTemplate jdbcTemplate) {
         if (user.getLogin().contains("") && user.getLogin().contains(" ")) {
             log.error("Логин не может быть пустым и содержать пробелы!");
             throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
@@ -41,7 +29,7 @@ public class Validator {
             throw new ValidationException("Дата рождения не может быть в будущем!");
         }
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where id=?", user.getId());
-        if(userRows.wasNull()){
+        if (userRows.wasNull()) {
             log.error("Такой пользователь уже существует!");
             throw new ValidationException("Такой пользователь уже существует!");
         }
@@ -49,7 +37,7 @@ public class Validator {
     }
 
 
-    public void checkFilmForDataBase(Film film,JdbcTemplate jdbcTemplate){
+    public void checkFilmForDataBase(Film film, JdbcTemplate jdbcTemplate) {
 
         if (film.getName().isBlank() || film.getName() == null) {
             log.error("Название не может быть пустым!");
@@ -67,7 +55,7 @@ public class Validator {
             log.error("Продолжительность фильма должна быть положительна!");
             throw new ValidationException("Продолжительность фильма должна быть положительна!");
         }
-        if(film.getMpa()==null){
+        if (film.getMpa() == null) {
             log.error("Жанр фильма не указан!");
             throw new ValidationException("Жанр фильма не указан!");
         }
